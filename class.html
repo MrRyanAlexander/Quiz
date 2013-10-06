@@ -3,114 +3,27 @@
 <head>
  <meta charset="utf-8">
 
-<title>Ryan's Software Services</title>
+<title>HTML5 Quiz Sample</title>
 <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="js/class.js"></script>
 <script type="text/javascript" src="js/EventUtil.js"></script>
-    <!-- include Bootstrap CSS for layout -->
 <link href="assests/bootstrap.css" rel="stylesheet" type="text/css">
 <link href="assets/class.css" media="screen" rel="stylesheet" type="text/css">
 
 </head>
-<!--body class="iframe exercise-4-21">
-
-  <div id="all-tours" class="links">
-
-  <h1>Guided Tours</h1>
-
-  <ul>
-
-    <li class="tour usa" data-discount="199">
-
-      <h2>New York, New York</h2>
-      <span class="details">$1,899 for 7 nights</span>
-
-      <button class="book">Book Now</button>
-      <a href="#" class="see-photos">See Photos</a>
-
-      <ul class="photos">
-        <li>
-          <img src="img/paris1.jpg">
-          <span>Arc de Triomphe</span>
-        </li>
-        <li>
-          <img src="img/paris2.jpg">
-          <span>The Eiffel Tower</span>
-        </li>
-        <li>
-          <img src="img/paris3.jpg">
-          <span>Notre Dame de Paris</span>
-        </li>
-      </ul>
-    </li>
-    <li class="tour france" data-discount="99">
-      <h2>Paris, France</h2>
-      <span class="details">$1,499 for 5 nights</span>
-      <button class="book">Book Now</button>
-      <a href="#" class="see-photos">See Photos</a>
-      <ul class="photos">
-        <li>
-          <img src="img/paris1.jpg">
-          <span>Arc de Triomphe</span>
-        </li>
-        <li>
-          <img src="img/paris2.jpg">
-          <span>The Eiffel Tower</span>
-        </li>
-        <li>
-          <img src="img/paris3.jpg">
-          <span>Notre Dame de Paris</span>
-        </li>
-      </ul>
-    </li>
-    <li class="tour uk" data-discount="149">
-      <h2>London, UK</h2>
-      <span class="details">$2,199 for 5 nights</span>
-      <button class="book">Book Now</button>
-      <a href="#" class="see-photos">See Photos</a>
-      <ul class="photos">
-        <li>
-          <img src="img/paris1.jpg">
-          <span>Arc de Triomphe</span>
-        </li>
-        <li>
-          <img src="img/paris2.jpg">
-          <span>The Eiffel Tower</span>
-        </li>
-        <li>
-          <img src="img/paris3.jpg">
-          <span>Notre Dame de Paris</span>
-        </li>
-      </ul>
-    </li>
-  </ul>
-</div-->
 <body>
   <div class="container">
-    <h1>HTML5 Local Storage Quiz Example</h1>
-        <form class="form-horizontal" id="quizForm">
-      <li class="quiz">
-        <h2>Quiz</h2>  
-          <input type="button" id="start" value="Start Quiz" class="btn btn-primary">
-          <ul id= "quizQuestions" 
-              class="hidden">
-            <li>
-              <label>
-              <span class="questions">Change</span>
-              <br>
-              <input type="radio" name="a" value="1" ><span id="rad1">Change</span><br>
-              <input type="radio" name="a" value="2" ><span id="rad2">Change</span><br>
-              <input type="radio" name="a" value="3" ><span id="rad3">Change</span><br>
-              <input type="radio" name="a" value="4" ><span id="rad4">Change</span><br>
-              </label>
-            </li>
-        </ul>
-      </li>        
-        <div class="form-actions">
-          <input type="button" value="Next" id="next" name="submit-btn" class="btn btn-primary">
-        </div>
-    </form>  
+    <h1>HTML5 Quiz Example</h1>
+
+    <button type="button" id="start">Start</button>
+      <div class="hidden" id="quizContainer">
+      <div id="question"><h2>First Question Example</h2> </div>
+        <button type="button" id="A">a</button>
+        <button type="button" id="B">b</button>
+        <button type="button" id="C">c</button>
+        <button type="button" id="D">d</button>
+      </div>
   </div>
-  <div id="done" class="hidden">DONE</div>
-</body></html>       
+</body>
+</html>   
