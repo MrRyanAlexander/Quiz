@@ -282,6 +282,7 @@ h1 {
   margin-bottom: 0.36923em;
   color: white;
   padding: 0 24px;
+
 }
 
 /* line 41, ../../app/assets/stylesheets/partials/_base.css.sass */
@@ -849,4 +850,8 @@ div.tour .photos span,
 }
 .hidden{
   display: none;
+}
+.container, .hidden{
+  margin-left: 150px;
+  margin-top: 100px;
 }

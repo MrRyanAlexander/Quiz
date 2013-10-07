@@ -32,7 +32,7 @@ $(document).ready(function () {
         choices: ["Tommy Flowers", "John Vincent Atanasoff", "Charles Babbage", "J. Presper Eckert"], 
         correctAnswer:"Charles Babbage"},
         {
-        question: "In 2009, who created the Node.js platform that is built on top of Google Chromes V8 Engin?", 
+        question: "In 2009, who created the Node.js platform that is built on top of Google Chromes V8 Engine?", 
         choices: ["Urban Hafner", "Ryan Dahl", "Abe Fettig", "Joshaven Potter"], 
         correctAnswer:"Ryan Dahl"},
         {
@@ -64,60 +64,45 @@ $(document).ready(function () {
 
     //next question
     $("#A,#B,#C,#D").on("click", function(event){
-        event.preventDefault;
-        if(q.length >= 1){
+        //event.preventDefault;
+        if(q.length > 0){
 
-        //get and store the users answer
-        answer = $(this).text();
-        storedAnswers.push(answer);
-        log("Answer = "+answer);
-        log("Stored Answers = "+storedAnswers);
-        //get the correct answer 
-            var correctANswer = q[0].correctAnswer;
-            log("Correct Answer = "+correctANswer);
-            //compare users answer with correct answer
-            if(answer == correctANswer){
-                score++; //add to score
-                log("The current score is : "+score);
-            }else if(answer != correctANswer){
-                score--; //subtract from score
-                log("The current score is : "+score);
-            }
-        //remove the question it's done
-        q.shift();
-        //get the next question
-        $("#question").text(q[0].question);
-                $("#A").text(q[0].choices[0]);
-                $("#B").text(q[0].choices[1]);
-                $("#C").text(q[0].choices[2]);
-                $("#D").text(q[0].choices[3]);
-        log("POPPED" + q.length);
-        //log(an);
-        log("There are "+ q.length + " questions remaining");
+           //get and store the users answer
+           answer = $(this).text();
+           storedAnswers.push(answer);
+           log("Answer = "+answer);
+           log("Stored Answers = "+storedAnswers);
+               //get the correct answer 
+               var correctANswer = q[0].correctAnswer;
+               log("Correct Answer = "+correctANswer);
+               //compare users answer with correct answer
+               if(answer == correctANswer){
+                   score++; //add to score
 
-        } else {
+               }
+               log("The current score is : "+score);
+           //remove the question it's done
+           q.shift();
+           //get the next question
+           $("#question").text(q[0].question);
+                   $("#A").text(q[0].choices[0]);
+                   $("#B").text(q[0].choices[1]);
+                   $("#C").text(q[0].choices[2]);
+                   $("#D").text(q[0].choices[3]);
 
-        //hide all the buttons, calculate percent and show end message
-        //get the answer and store it
-        answer = $(this).text();
-        storedAnswers.push(answer);
-        //remove the final question
-        q.shift();
-        log("Answer = "+answer);
-        log("Stored Answers = "+storedAnswers);
-        log("There are "+ q.length + " questions remaining");
-        log("Correct Answer = "+correctANswer);
-        log("The current score is : "+score);
-        //hide the buttons
-        $("#A,#B,#C,#D").hide();
-        //calculate users final score
-        var percent = score / 5 * 100;
-        //show the users results
-        var display = storedAnswers.join("-");
-        $("#question").text("THE END" +"You scored "+percent+"% and Your answers " + display);
+           log("There are "+ q.length + " questions remaining");
+
+        } else if(q.length == 0){
+
+            //hide the buttons
+            $("#A,#B,#C,#D").hide();
+            //calculate users final score
+            var percent = score / 5 * 100;
+            //show the users results
+            $("#question").text("You scored "+percent+"%");
         }
 
-        //end
+        //end ??what bug is causing the last button to be clicked twice??
     });
                 
 });
