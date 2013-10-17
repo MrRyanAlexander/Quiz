@@ -8,7 +8,7 @@
 * inplemented localStorage
 * implemented cross browser compatability update
 * implemented next & back buttons
-* implemented number of trys until the end
+* implemented number of tries until the end
 * implemented forced questions
 * need - implemented Json file, deleted JS object
 * need - implemented User Signup and Login Authentication
@@ -57,8 +57,8 @@ $(document).ready(function() {
 	var currentQuestion = 0;
 	var score = 0;
 	var numQuestions = q.length;
-	var trys = 0;
-	var trysLeft = 3;
+	var tries = 0;
+	var triesLeft = 3;
 
 	//hide on load
 	$('#results, .quizContainer, #restart').hide();
@@ -80,7 +80,7 @@ $(document).ready(function() {
 		if(currentQuestion == 0){
 			//do something
 			$(this).fadeOut('slow');
-			alert("You're at the beginning, answer some questions or change some answer and click next to move forward! You have "+trysLeft+" trys remaining!");
+			alert("You're at the beginning, answer some questions or change some answer and click next to move forward! You have "+triesLeft+" tries remaining!");
 		}else{
 			storeData();
 			currentQuestion--;
@@ -100,16 +100,16 @@ $(document).ready(function() {
 	            if(currentQuestion == numQuestions -1){
                 	storeData();
                 	$('#next, #back, .question, .choiceList').fadeOut('slow');
-                    trys++;//only allow 3 trys to complete quiz
-                        if(trys < 3){
+                    tries++;//only allow 3 tries to complete quiz
+                        if(tries < 3){
 							results();
 							$('#results, #restart').fadeIn('slow');
 						}else{
 							results();
 							$('#results').fadeIn('slow');
 						}
-                        trysLeft--;
-                        alert("You've reached the end of this try. You have "+ trysLeft + " trys remaining!");
+                        triesLeft--;
+                        alert("You've reached the end of this try. You have "+ triesLeft + " tries remaining!");
 	            }else{                        
 	                storeData();
 	                currentQuestion++;
