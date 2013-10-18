@@ -3,13 +3,18 @@
 <head>
 <meta charset="utf-8">
 <title>jQuiz</title>
-<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
-<script type="text/javascript" src="js/jQueryQuiz.js"></script>
+<script type="text/javascript" src="assets/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="assets/js/jQueryQuiz.js"></script>
+<link href="assets/css/jQuiz.css" rel="Stylesheet" type="text/css" ></link>
 </head>
 <body>
-  <div class="start"><input type="button" id="start" value="start"></div>
-    <h1>jQuiz</h1>
+  <h1>jQuiz</h1>
+    <form id="loginForm">
+    Username: <input type="text" name="username" id="username" class="text" maxlength="30" />
+    Password: <input type="password" name="password" id="password" class="text" maxlength="30" />
+    <input type="submit" id="login" value="Login">
+  </form>
       <div class="quizContainer">
         <form id="quizForm">
           <h2 class="question"></h2>
@@ -17,15 +22,11 @@
           <div class="buttons">
             <input type="button" id="back" value="Back">
             <input type="button" id="next" value="Next">
-            <input type="button" id="submit" value="Submit Quiz">
           </div>
         </form>
       </div>
         <input type="button" id="restart" value="Try Again">
-        <table id='results' border='2'>
-          <tr id='tr1'></tr>
-          <tr id='tr2'></tr>
-        </table>
+        <div id='results'><div id='score'></div></div>
 </body>
 </html>  
 
