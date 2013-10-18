@@ -11,9 +11,8 @@
 * implemented number of tries until the end
 * implemented forced questions
 * implemented Json file, deleted JS object
-* need - implemented User Signup and Login Authentication
+* implemented User Signup and Login Authentication via localStorage 
 * need - implemented Twitter Bootstrap
-* need ? 
 */
 
 $(document).ready(function() {
@@ -34,12 +33,13 @@ $(document).ready(function() {
 	getJSON();
 
 	//set login button text to signup if no username or password
-	//varLoginSignup();
+	varLoginSignup();
 
 	//start quiz button
 	$("#loginForm").submit(function(e) {
     	e.preventDefault();
-    	loginSignupAuth();	    
+    	loginSignupAuth();
+    	varLoginSignup();
 	});
 	
 	//back button
@@ -155,10 +155,8 @@ $(document).ready(function() {
 				tdNum.appendChild(num);	
 				tableRow1.appendChild(tdNum);
 				tableRow2.appendChild(tdAnswer);
-	
 				table.appendChild(tableRow1);
 				table.appendChild(tableRow2);
-
 				div.appendChild(table);	
 			}
 
@@ -292,19 +290,22 @@ $(document).ready(function() {
 		if(storedUsername == null && storedPassword == null || storedUsername == undefined && storedPassword == undefined){
 	    	localStorage.setItem("user", username);
 	    	localStorage.setItem("password", password);
+	    	cookieUtil.set("user", username, null, null, null, false);
+	    	cookieUtil.set("password", password, null, null, null, false);
 	    	log('user :'+username+'just signed up with pass:'+password);
 	    //if the user has signed up before
 	 	}else if(storedUsername != null && storedPassword != null || storedUsername != undefined && storedPassword != undefined){
 	 		//find out if the entered user and pass do not match the stored user and pass
 	 		if(username != storedUsername && password != storedPassword){
 	 			//if the login data does not match alert the user of her error
-	 		    return alert("Oops you entered the wrong username or password");
+	 		    alert("Oops you entered the wrong username or password");
 	 		//if the login details are correct return success, which in this case is my auth func
 	 		}else if(username == storedUsername && password == storedPassword){
 	 			return authenticateLogin();
 	 		}
 	 	}
 	}	
+
 	//find out if user signed up before and if true show their login info on load
 	function varLoginSignup(){
 		var username = localStorage.getItem("user");
@@ -312,8 +313,11 @@ $(document).ready(function() {
     	if(username == null || username == undefined){
     		$('#login').val('Signup');
     	}else if(username != null || username != undefined){
-    		$("#username").val(username);
-        	$("#password").val(password);
+    		if(currentQuestion == 0){
+    			$('#login').val('Login');
+    		}else{
+    		$('#welcome').text("Welcome back " + username + "!").fadeIn('slow');
+    		}
     	}
     }
 
@@ -329,6 +333,44 @@ $(document).ready(function() {
             log("error occurred!");
     	});
     }
+
+    //handle cookies
+    var cookieUtil = {
+		get: function (name){
+			var cookieName = encodeURIComponent(name) + "=",
+			cookieStart = document.cookie.indexOf(cookieName),
+			cookieValue = null;
+			if (cookieStart > -1){
+				var cookieEnd = document.cookie.indexOf(";", cookieStart);
+			if (cookieEnd == -1){
+				cookieEnd = document.cookie.length;
+			}
+			cookieValue = decodeURIComponent(document.cookie.substring(cookieStart
+			+ cookieName.length, cookieEnd));
+			}
+			return cookieValue;
+		},
+		set: function (name, value, expires, path, domain, secure) {
+			var cookieText = encodeURIComponent(name) + "=" +
+			encodeURIComponent(value);
+			if (expires instanceof Date) {
+				cookieText += "; expires=" + expires.toGMTString();
+			}
+			if (path) {
+				cookieText += "; path=" + path;
+			}
+			if (domain) {
+				cookieText += "; domain=" + domain;
+			}
+			if (secure) {
+				cookieText += "; secure";
+			}
+			document.cookie = cookieText;
+		},
+		unset: function (name, path, domain, secure){
+			this.set(name, "", new Date(0), path, domain, secure);
+		}
+};
 
    //create log 
     function log(t){
