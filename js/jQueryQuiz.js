@@ -10,7 +10,7 @@
 * implemented next & back buttons
 * implemented number of tries until the end
 * implemented forced questions
-* need - implemented Json file, deleted JS object
+* implemented Json file, deleted JS object
 * need - implemented User Signup and Login Authentication
 * need - implemented Twitter Bootstrap
 * need ? 
@@ -26,43 +26,31 @@
 
 $(document).ready(function() {
 
-	//questions //futur JSON
-    var q = [
-        {
-        question: "Who is the President of the United States today?", 
-        choices: ["George W. Bush", "John MCain", "Barack Obama", "Tony Blair"], 
-        correctAnswer: "Barack Obama",
-        userAnswer: []},
-        {
-        question: "Which of these is Javascript proper?", 
-        choices: ['javascript', 'menow', 'mitorinor', 'bugnappingler'], 
-        correctAnswer:'mitorinor',
-        userAnswer: []},
-        {
-        question: "In 1822, who purposed and began developing the Difference Engine?", 
-        choices: ["Tommy Flowers", "John Vincent Atanasoff", "Charles Babbage", "J. Presper Eckert"], 
-        correctAnswer:"Charles Babbage",
-        userAnswer: []},
-        {
-        question: "In 2009, who created the Node.js platform that is built on top of Google Chromes V8 Engine?", 
-        choices: ["Urban Hafner", "Ryan Dahl", "Abe Fettig", "Joshaven Potter"], 
-        correctAnswer:"Ryan Dahl",
-        userAnswer: []},
-        {
-        question: "In Douglas Engelbarts 1968 presentation entitled, 'The Mother of All Demos', what entity do words makeup?", 
-        choices: ["Statement", "Command", "String", "List"], 
-        correctAnswer:"Statement",
-        userAnswer: []}
-        ];
 	var currentQuestion = 0;
 	var score = 0;
-	var numQuestions = q.length;
 	var tries = 0;
 	var triesLeft = 3;
+	var restart = false;
+
+    //questions get from JSON - store in q[] not working locally 
+    var q = [];
+
+    $.ajaxSetup({ cache: false }); //what is this doing? 
+
+	$.getJSON("/js/questions.json", function(data){
+            //loop through array 
+        $.each(data, function(index, d){
+            q.push(d);
+        });
+ 
+        }).error(function(jqXHR, textStatus, errorThrown){  //assign handler 
+            log("error occurred!");
+    });
+	
 
 	//hide on load
 	$('#results, .quizContainer, #restart').hide();
-	
+
 	//start quiz button
 	$('#start').click(function(e){
 		e.preventDefault();
@@ -109,6 +97,7 @@ $(document).ready(function() {
 							$('#results').fadeIn('slow');
 						}
                         triesLeft--;
+                        log("tries left :" + triesLeft);
                         alert("You've reached the end of this try. You have "+ triesLeft + " tries remaining!");
 	            }else{                        
 	                storeData();
@@ -121,52 +110,112 @@ $(document).ready(function() {
         }   
     });
 
-	//hidden restart button
+	//hidden try again button
 	$('#restart').click(function(e){
 		e.preventDefault();
-		//reset();
+		restart = true; 
+		removeResults();
 		currentQuestion = 0;
+		score = 0;
 		$('#back, #submit, #restart, #results').hide();
 		$('.question, .choiceList, #next').fadeIn('slow');
 		loadData();
+		restart = false;
 	});
 
-	function reset(){
-		var num = document.getElementById('1');
-		var answer = document.getElementById('2');
-		num.parentNode.removeChild(num);
-		answer.parentNode.removeChild(answer);
-	}
-	//generate results
+	//generate the results page
 	function results(){
-		for(i=0; i<numQuestions; i++){
-			log(i + " : " + q[i].userAnswer);
+		var div = document.getElementById('results');
+		div.style.marginLeft = '100px';
+		var scoreDiv = document.getElementById('score');
+		scoreDiv.style.marginLeft = '150px';
 
-		var table = document.getElementById('results');
-		
-		var tableRow1 = document.getElementById('tr1');
-		var tableRow2 = document.getElementById('tr2');
+		var table = document.createElement('table');
+		table.id = 'qAndA';
+		table.border = '2px';
+		table.style.textAlign = 'center';
+		table.style.fontSize = '20px';
+		table.style.color = 'black';
 
-		var tdNum = document.createElement('td');
-		var tdAnswer = document.createElement('td');
-		var qNum = i + 1;
-		var num = document.createTextNode("Question : " + qNum);
-		var answer = document.createTextNode(q[i].userAnswer);
+		var table0 = document.createElement('table');
+		table0.id = 'scores';
+		table0.border = '5px';
+		table0.style.textAlign = 'center';
+		table0.style.fontSize = '40px';
+		table0.style.color = 'green';
 
-		tdNum.appendChild(num);
-		tdAnswer.appendChild(answer);
+		var tr = document.createElement('tr');
+		var td = document.createElement('td');
+		var userScore = document.createTextNode(score / q.length * 100 + "%");
 
-		tableRow1.appendChild(tdNum);
-		tableRow2.appendChild(tdAnswer);
+		td.appendChild(userScore);
+		td.appendChild(theEnd);
+		tr.appendChild(td);
+		table0.appendChild(tr);
+		scoreDiv.appendChild(table0);
 
-		table.appendChild(tableRow1);
-		table.appendChild(tableRow2);
+			for(var i=0; i<q.length; i++){
+				var tableRow1 = document.createElement('tr');
+				var tableRow2 = document.createElement('tr');
+	
+				var tdNum = document.createElement('td');
+				var tdAnswer = document.createElement('td');
+				var num = document.createTextNode(q[i].question);
+				//if user has reached the end show correct answers
+				if(q[i].correct == false && tries == 3){
+					var answer = document.createTextNode("You answered : " + localStorage.getItem("answer " + i) + " ,but the correct answer is : " + q[i].correctAnswer);     
+                	tdAnswer.appendChild(answer);
+				//otherwise only show the users answer and not the correct answer 
+            	}else{
+					var answer = document.createTextNode("You answered : " + localStorage.getItem("answer " + i));
+                	tdAnswer.appendChild(answer);
+				}
 
-		document.body.appendChild(table);
+				tdNum.appendChild(num);	
+				tableRow1.appendChild(tdNum);
+				tableRow2.appendChild(tdAnswer);
+	
+				table.appendChild(tableRow1);
+				table.appendChild(tableRow2);
 
-		}
-		log("Your score = " + score / numQuestions * 100 + "%");
+				div.appendChild(table);	
+			}
+
+			var perfectScore = false;
+			//check for perfect score
+            
+            if(score == q.length){
+            	perfectScore = true;
+            }
+            //if the user has no tries left, show final results
+			//this is the end so style it out different like THE END.. :) :) 
+			if(perfectScore == false && tries == 3){
+				table0.border = '10px';
+				table0.style.fontSize = '100px';
+				table0.style.color = 'blue';
+				var theEnd = document.createTextNode("THE END");       
+                td.appendChild(theEnd);
+
+            }else if(perfectScore == true && tries == 3){
+				table0.border = '30px';
+				table0.style.fontSize = '150px';
+				table0.style.color = 'red';
+				var theEnd = document.createTextNode("Perfect Score *THE END*");
+                td.appendChild(theEnd);	
+			//otherwise only show the users answer and not the correct answer 
+			}else{
+				log('something is not the END');
+			}
+	//log("Your score = " + score / q.length * 100 + "%");
 	}
+
+	//refresh the results page
+ 	function removeResults(){
+ 		if(restart){ 
+				$('#qAndA').remove();
+				$('#scores').remove();
+			}
+ 	}
 
 	//load q&a data
     function loadData(){
@@ -174,7 +223,6 @@ $(document).ready(function() {
 	    	var question = q[currentQuestion].question;
 	    	var numChoices = q[currentQuestion].choices.length;
 	    	var correctAnswer = q[currentQuestion].correctAnswer;
-
 
 			// Set the questionClass text to the current question
 		    $('.question').fadeIn('slow');
@@ -195,52 +243,52 @@ $(document).ready(function() {
 
 		        	localAnswer = "not answered";
 		        	localVal = "no value";
-		        	log("Local Answer: " + localAnswer); 
-		        	log("Local Value: " + localVal);
 		    	}else{
 		    		localAnswer = localStorage.getItem("answer " + currentQuestion);
 		    		localVal = localStorage.getItem("value " + currentQuestion);
-		    		log("Local Answer: " + localAnswer); 
-		        	log("Local Value: " + localVal);
 		    	}
 		
-		        // If we already have a user answer for this choice then check the radio button
+		        //find out if the user has already answered this question before and if so, select that radio button. 
 		        if ( i == localVal ) {
 		            tag = '<li><input type="radio" value=' + localVal + ' id=' + localVal + ' checked=true name="choices" ><label for=' + localVal + '>'+choice+'</label></li>';
-		        	//break;
-		        	log("radio checked");
 		        } else {
 		            tag = '<li><input type="radio" value=' + i + ' id=' + i + ' name="choices" ><label for=' + i + '>'+choice+'</label></li>';
-		        	//break;
-		        	log("radio not checked");
 		        }
-		        //log(tag);
+		        //append the tab to the .choiceList and fade in slow
 		        $(tag).appendTo('.choiceList').fadeIn('slow');
 	    	} 		
     }
     	
     //store data locally	
     function storeData(){
+    	//find out if the user has clicked the radio button
     	if($('input[name=choices]:checked').length > 0){
-				var txt = $('input:radio:checked + label').text(); //checked text 
-		       	var val = $('input:radio:checked').val(); //checked value
-		       	//log(val); log(txt);
-
-		       	if(q[currentQuestion].userAnswer.length == 0){
-		       		q[currentQuestion].userAnswer.push(txt); //store in array
-		       			if(q[currentQuestion].userAnswer == q[currentQuestion].correctAnswer){
-		       				score++;
-		       			}else if(q[currentQuestion].userAnswer != q[currentQuestion].correctAnswer){
-		       				if(score > 0){
-		       					score--;
-		       				}
-		       			}
-		       			log("The current score = " + score);
-		        }
-
-		       	localStorage.setItem("answer " + currentQuestion, txt); 
-		       	localStorage.setItem("value " + currentQuestion, val);
+			var txt = $('input:radio:checked + label').text(); //store checked text 
+		    var val = $('input:radio:checked').val(); //store checked value
+		    //log(val); log(txt);
+			//store the users answer and the checked value in localStorage
+		    localStorage.setItem("answer " + currentQuestion, txt); 
+		    localStorage.setItem("value " + currentQuestion, val);
+		    //find out if the user has answered the question before, currently 
+		    //this statement is only checking to see if there is one answer and 
+		    //if so will proceed to the next step
+		    if(q[currentQuestion].userAnswer.length == 0){
+		       	q[currentQuestion].userAnswer.push(txt); //if 0 store in array
 		    }
+		       	//find out if the users localStorage answer is correct 
+		       	if(localStorage.getItem("answer " + currentQuestion) == q[currentQuestion].correctAnswer){
+		       		//add to the score
+		       		score++;
+		       		//set the users answer to correct
+		       		q[currentQuestion].correct = true;
+		       	//if the user got the question wrong
+		       	}
+		      log(q[currentQuestion].userAnswer);
+		    //log(q[currentQuestion].correct);
+		    //log(localStorage.getItem("answer " + currentQuestion));
+		    //log("The current score = " + score);
+		    //log("The current question is : " + currentQuestion);
+		}
     }
 
     //create log 
