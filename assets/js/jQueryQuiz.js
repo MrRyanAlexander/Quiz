@@ -12,7 +12,7 @@
 * implemented forced questions
 * implemented Json file, deleted JS object
 * implemented User Signup and Login Authentication via localStorage 
-* need - implemented Twitter Bootstrap
+* implemented Twitter Bootstrap
 */
 
 $(document).ready(function() {
@@ -26,7 +26,7 @@ $(document).ready(function() {
 	    q = [];
 
     //hide on load
-	$('#results, .quizContainer, #restart').hide();
+	$('#form-results, .form-quiz, #restart').hide();
 
 	//Get JSON (need to find out a secure way to handle this because
 	//the way I am calling it here exposes the JSON file to the world)
@@ -36,7 +36,7 @@ $(document).ready(function() {
 	varLoginSignup();
 
 	//start quiz button
-	$("#loginForm").submit(function(e) {
+	$(".form-signin").submit(function(e) {
     	e.preventDefault();
     	loginSignupAuth();
     	varLoginSignup();
@@ -45,7 +45,7 @@ $(document).ready(function() {
 	//back button
 	$("#back").click(function(e){
 		e.preventDefault();
-		$('.quizContainer').hide().fadeIn('slow');
+		$('.form-quiz').hide().fadeIn('slow');
 		//prevent position from going negative. Change to 1 to hide (this) first. 
 		if(currentQuestion == 0){
 			//do something
@@ -65,18 +65,18 @@ $(document).ready(function() {
         //force user to answer question
         if($('input[name=choices]:checked').length > 0){
 
-	        $('.quizContainer').hide().fadeIn('slow');
+	        $('.form-quiz').hide().fadeIn('slow');
 	        //prevent position from going beyond questions
 	            if(currentQuestion == q.length -1){
                 	storeData();
-                	$('#next, #back, .question, .choiceList').fadeOut('slow');
+                	$('#next, #back, .form-quiz-question, .form-quiz-choiceList').fadeOut('slow');
                     tries++;//only allow 3 tries to complete quiz
                         if(tries < 3){
 							results();
-							$('#results, #restart').fadeIn('slow');
+							$('#form-results, #restart').fadeIn('slow');
 						}else{
 							results();
-							$('#results').fadeIn('slow');
+							$('#form-results').fadeIn('slow');
 						}
                         triesLeft--;
                         log("tries left :" + triesLeft);
@@ -99,18 +99,17 @@ $(document).ready(function() {
 		removeResults();
 		currentQuestion = 0;
 		score = 0;
-		$('#back, #submit, #restart, #results').hide();
-		$('.question, .choiceList, #next').fadeIn('slow');
+		$('#back, #restart, .form-results').hide();
+		$('.form-quiz-question, .form-quiz-choiceList, #next').fadeIn('slow');
 		loadData();
 		restart = false;
 	});
 
 	//generate the results page
 	function results(){
-		var div = document.getElementById('results');
-		div.style.marginLeft = '100px';
-		var scoreDiv = document.getElementById('score');
-		scoreDiv.style.marginLeft = '150px';
+                var con = document.getElementsByClassName('container')[0];
+		var div = document.getElementById('form-results');
+		var scoreDiv = document.getElementById('form-score');
 
 		var table = document.createElement('table');
 		table.id = 'qAndA';
@@ -158,6 +157,7 @@ $(document).ready(function() {
 				table.appendChild(tableRow1);
 				table.appendChild(tableRow2);
 				div.appendChild(table);	
+                                con.appendChild(div);
 			}
 
 			var perfectScore = false;
@@ -231,8 +231,8 @@ $(document).ready(function() {
     //load q&a data
     function loadData(){
 
-    		$('#login, #loginForm').fadeOut(100);
-			$('.quizContainer').fadeIn('slow');
+    		$('#login, .form-signin').fadeOut(100);
+			$('.form-quiz').fadeIn('slow');
 			$('#back, #submit').hide();
 
 	    	var question = q[currentQuestion].question;
@@ -240,14 +240,14 @@ $(document).ready(function() {
 	    	var correctAnswer = q[currentQuestion].correctAnswer;
 
 			// Set the questionClass text to the current question
-		    $('.question').fadeIn('slow');
-		    $('.question').text(question);
+		    $('.form-quiz-question').fadeIn('slow');
+		    $('.form-quiz-question').text(question);
 		
 			//Fade the buttons with question
-			$('.buttons').fadeIn('slow');
+			$('#back, #next').fadeIn('slow');
 			
 		    // Remove all current <li> elements (if any)
-		    $('.choiceList').find("li").remove();
+		    $('.form-quiz-choiceList').find("li").remove();
 
 		    var i, choice, userAnswer, localAnswer, localVal, tag;
 		    for (i = 0; i < numChoices; i ++) {
@@ -270,7 +270,7 @@ $(document).ready(function() {
 		            tag = '<li><input type="radio" value=' + i + ' id=' + i + ' name="choices" ><label for=' + i + '>'+choice+'</label></li>';
 		        }
 		        //append the tab to the .choiceList and fade in slow
-		        $(tag).appendTo('.choiceList').fadeIn('slow');
+		        $(tag).appendTo('.form-quiz-choiceList').fadeIn('slow');
 	    	} 		
     }
     
@@ -311,12 +311,12 @@ $(document).ready(function() {
 		var username = localStorage.getItem("user");
     	var password = localStorage.getItem("password");
     	if(username == null || username == undefined){
-    		$('#login').val('Signup');
+    		$('#login').text('Signup');
     	}else if(username != null || username != undefined){
     		if(currentQuestion == 0){
-    			$('#login').val('Login');
+    			$('#login').text('Login');
     		}else{
-    		$('#welcome').text("Welcome back " + username + "!").fadeIn('slow');
+    		$('.form-signin-heading-2').text("Welcome back " + username + "!").fadeIn('slow');
     		}
     	}
     }
@@ -324,7 +324,7 @@ $(document).ready(function() {
     //get questions from external JSON file
     function getJSON(){
     	$.ajaxSetup({ cache: false }); //what is this doing? 
-		$.getJSON("/assets/js/questions.json", function(data){
+		$.getJSON("assets/js/questions.json", function(data){
             //loop through array 
         	$.each(data, function(index, d){
             	q.push(d);
@@ -333,6 +333,27 @@ $(document).ready(function() {
             log("error occurred!");
     	});
     }
+
+    var randomVar = [{"question":"What is your name", "choices":["A","B","C"], "correntAnswer":"B"}];
+    createJsonFile();
+
+    function createJsonFile() {
+    	// some jQuery to write to file
+    	$.ajax({
+        	type : "POST",
+        	url : "assets/php/json.php",
+        	dataType : 'json',
+        	data : {
+            	json : randomVar //create this
+        	},
+        	success: function(data) {
+            questions = data;
+        	},
+        	// This forces the Ajax callback to respond only when completed
+        	async: false 	
+    	});
+    	console.log("Wrote the JSON file OK! ")
+	}
 
     //handle cookies
     var cookieUtil = {

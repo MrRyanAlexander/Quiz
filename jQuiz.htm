@@ -1,33 +1,163 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>jQuiz</title>
-<script type="text/javascript" src="assets/js/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="assets/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script type="text/javascript" src="assets/js/jQueryQuiz.js"></script>
-<link href="assets/css/jQuiz.css" rel="Stylesheet" type="text/css" ></link>
-</head>
-<body>
-  <h1>jQuiz</h1>
-  <h2><div id="welcome"></div></h2>
-    <form id="loginForm">
-    Username: <input type="text" name="username" id="username" class="text" maxlength="30" />
-    Password: <input type="password" name="password" id="password" class="text" maxlength="30" />
-    <input type="submit" id="login" value="Login">
-  </form>
-      <div class="quizContainer">
-        <form id="quizForm">
-          <h2 class="question"></h2>
-          <ul class="choiceList"></ul>
-          <div class="buttons">
-            <input type="button" id="back" value="Back">
-            <input type="button" id="next" value="Next">
-          </div>
-        </form>
-      </div>
-        <input type="button" id="restart" value="Try Again">
-        <div id='results'><div id='score'></div></div>
-</body>
-</html>  
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>jQuiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 50px;
+        padding-bottom: 40px;
+        background-image:url('assets/img/unwater.jpg')
+      }
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        opacity:0.7;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading-1,
+      .form-signin .form-signin-heading-2,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+      .form-quiz-question{
+        font-size: 16px;
+        height: auto;
+      }
+
+      .form-quiz-choiceList{
+        font-size: 16px;
+        height: auto;
+      }
+      
+      #form-results,
+      #form-results #form-score{
+        font-size: 16px;
+        height: auto;
+      }
+
+      #form-results{
+        max-width: 500px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        opacity:0.7;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+
+      .form-quiz{
+        max-width: 500px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        opacity:0.7;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+
+      .form-quiz input[type="radio"]{
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+    </style>
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="/assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="assets/ico/favicon.png">
+  </head>
+  <body>
+
+    <div class="container">
+      <form class="form-signin">
+        <h1 class="form-signin-heading-1">jQuiz</h1>
+          <h2 class="form-signin-heading-2"></h2>
+        <input type="text" name="username" id="username" class="input-block-level" placeholder="Username">
+        <input type="password" name="password" id="password" class="input-block-level" placeholder="Password">
+          <label class="checkbox">
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+         <button class="btn btn-large btn-primary" type="submit" id="login" value="Login">Login</button>
+      </form>
+
+      <form class="form-quiz">
+        <h2 class="form-quiz-question"></h2>
+        <ul class="form-quiz-choiceList"></ul>
+        <input type="button" class="btn btn-large btn-primary" id="back" value="Back">
+        <input type="button" class="btn btn-large btn-primary" id="next" value="Next">
+      </form>
+      <div id="form-results">
+        <input type="button" class="btn btn-large btn-primary" id="restart" value="Try Again">
+        <div id="form-score">
+        </div>
+      </div>
+  </div>  <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/jquery-1.10.2.min.js"></script>
+    <script src="assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="assets/js/jQueryQuiz.js"></script>
+
+  </body>
+</html>
+  
