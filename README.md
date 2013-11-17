@@ -3,7 +3,7 @@ Quiz
 
 Quiz Example - jQuery, HTML5
 
-live example "http://pminus.byethost7.com/"
+live example "http://pminus.byethost7.com/projects/jquiz/index.html"
 
 This is a simple dynamic quiz. 
 
